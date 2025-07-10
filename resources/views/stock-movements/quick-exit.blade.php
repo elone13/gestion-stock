@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ajouter un produit</title>
+    <title>Sortie Rapide de Stock</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 </head>
@@ -73,8 +73,8 @@
     </nav>
 
     <div class="container mt-4">
-        <h1 class="mb-4">Ajouter un produit</h1>
-        
+        <h1 class="mb-4"><i class="fas fa-arrow-up me-2"></i>Sortie Rapide de Stock</h1>
+
         @if($errors->any())
             <div class="alert alert-danger alert-dismissible fade show" role="alert">
                 <i class="fas fa-exclamation-triangle me-2"></i>Veuillez corriger les erreurs suivantes :
@@ -88,57 +88,64 @@
         @endif
 
         <div class="card">
+            <div class="card-header bg-danger text-white">
+                <h5 class="mb-0"><i class="fas fa-minus me-2"></i>Retirer du Stock</h5>
+            </div>
             <div class="card-body">
-                <form method="POST" action="{{ route('products.store') }}">
-            @csrf
-                                <div class="mb-3">
-                        <label for="name" class="form-label">Nom du produit</label>
-                        <input type="text" class="form-control" id="name" name="name" value="{{ old('name') }}" required>
+                <form method="POST" action="{{ route('stock-movements.store') }}">
+                    @csrf
+                    <input type="hidden" name="type" value="out">
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="product_id" class="form-label">Produit</label>
+                                <select class="form-control" id="product_id" name="product_id" required>
+                                    <option value="">Sélectionner un produit</option>
+                                    @foreach($products as $product)
+                                        <option value="{{ $product->id }}" {{ old('product_id') == $product->id ? 'selected' : '' }}>
+                                            {{ $product->name }} (Stock actuel: {{ $product->quantity }})
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="quantity" class="form-label">Quantité à retirer</label>
+                                <input type="number" class="form-control" id="quantity" name="quantity" value="{{ old('quantity') }}" min="1" required>
+                            </div>
+                        </div>
                     </div>
-                    <div class="mb-3">
-                        <label for="reference" class="form-label">Référence</label>
-                        <input type="text" class="form-control" id="reference" name="reference" value="{{ old('reference') }}" required>
-                        <div class="form-text">Code unique pour identifier le produit (ex: PROD-001)</div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="reference" class="form-label">Référence</label>
+                                <input type="text" class="form-control" id="reference" name="reference" value="{{ old('reference') }}" placeholder="Bon de sortie, facture, etc.">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="reason" class="form-label">Raison</label>
+                                <input type="text" class="form-control" id="reason" name="reason" value="{{ old('reason') }}" placeholder="Vente, consommation, etc.">
+                            </div>
+                        </div>
                     </div>
-                    <div class="mb-3">
-                        <label for="category_id" class="form-label">Catégorie</label>
-                        <select class="form-control" id="category_id" name="category_id">
-                            <option value="">Sélectionner une catégorie</option>
-                            @foreach($categories as $category)
-                                <option value="{{ $category->id }}" {{ old('category_id') == $category->id ? 'selected' : '' }}>
-                                    {{ $category->name }}
-                                </option>
-                            @endforeach
-                        </select>
+
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-danger">
+                            <i class="fas fa-minus me-2"></i>Retirer du Stock
+                        </button>
+                        <a href="{{ route('stock-movements.index') }}" class="btn btn-secondary">
+                            <i class="fas fa-arrow-left me-2"></i>Retour
+                        </a>
                     </div>
-            <div class="mb-3">
-                <label for="description" class="form-label">Description</label>
-                <textarea class="form-control" id="description" name="description">{{ old('description') }}</textarea>
-            </div>
-            <div class="mb-3">
-                <label for="price" class="form-label">Prix (€)</label>
-                <input type="number" step="0.01" class="form-control" id="price" name="price" value="{{ old('price') }}" required>
-            </div>
-                                <div class="mb-3">
-                        <label for="quantity" class="form-label">Quantité</label>
-                        <input type="number" class="form-control" id="quantity" name="quantity" value="{{ old('quantity') }}" required>
-                    </div>
-                    <div class="mb-3">
-                        <label for="min_quantity" class="form-label">Quantité minimum (Seuil d'alerte)</label>
-                        <input type="number" class="form-control" id="min_quantity" name="min_quantity" value="{{ old('min_quantity', 5) }}" required>
-                        <div class="form-text">Alerte quand le stock descend en dessous de cette valeur</div>
-                    </div>
-            <div class="d-flex gap-2">
-                <button type="submit" class="btn btn-primary">
-                    <i class="fas fa-plus me-2"></i>Ajouter
-                </button>
-                <a href="{{ route('products.index') }}" class="btn btn-secondary">
-                    <i class="fas fa-arrow-left me-2"></i>Annuler
-                </a>
-            </div>
-        </form>
+                </form>
             </div>
         </div>
+    </div>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html> 

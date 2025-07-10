@@ -28,6 +28,24 @@
                             <i class="fas fa-box me-1"></i>Produits
                         </a>
                     </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ route('categories.index') }}">
+                            <i class="fas fa-tags me-1"></i>Catégories
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ route('stock-movements.index') }}">
+                            <i class="fas fa-exchange-alt me-1"></i>Mouvements
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ route('notifications.index') }}">
+                            <i class="fas fa-bell me-1"></i>Notifications
+                            @if(auth()->user()->unreadNotificationsCount() > 0)
+                                <span class="badge bg-danger ms-1">{{ auth()->user()->unreadNotificationsCount() }}</span>
+                            @endif
+                        </a>
+                    </li>
                 </ul>
                 <ul class="navbar-nav">
                     <li class="nav-item dropdown">
@@ -63,11 +81,41 @@
                 <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
             </div>
         @endif
-        <a href="{{ route('products.create') }}" class="btn btn-primary mb-3">Ajouter un produit</a>
+        
+        <div class="row mb-3">
+            <div class="col-md-8">
+                <form method="GET" action="{{ route('products.index') }}" class="d-flex gap-2">
+                    <input type="text" name="search" class="form-control" placeholder="Rechercher par nom, référence ou description..." value="{{ request('search') }}">
+                    <select name="category_id" class="form-select" style="width: auto;">
+                        <option value="">Toutes les catégories</option>
+                        @foreach($categories as $category)
+                            <option value="{{ $category->id }}" {{ request('category_id') == $category->id ? 'selected' : '' }}>
+                                {{ $category->name }}
+                            </option>
+                        @endforeach
+                    </select>
+                    <button type="submit" class="btn btn-outline-primary">
+                        <i class="fas fa-search"></i>
+                    </button>
+                    @if(request('search') || request('category_id'))
+                        <a href="{{ route('products.index') }}" class="btn btn-outline-secondary">
+                            <i class="fas fa-times"></i>
+                        </a>
+                    @endif
+                </form>
+            </div>
+            <div class="col-md-4 text-end">
+                <a href="{{ route('products.create') }}" class="btn btn-primary">
+                    <i class="fas fa-plus me-2"></i>Ajouter un produit
+                </a>
+            </div>
+        </div>
         <table class="table table-striped table-bordered">
             <thead class="table-dark">
                 <tr>
                     <th>Nom</th>
+                    <th>Référence</th>
+                    <th>Catégorie</th>
                     <th>Description</th>
                     <th>Prix</th>
                     <th>Quantité</th>
@@ -78,6 +126,16 @@
                 @foreach($products as $product)
                 <tr>
                     <td>{{ $product->name }}</td>
+                    <td><code>{{ $product->reference }}</code></td>
+                    <td>
+                        @if($product->category)
+                            <span class="badge" style="background-color: {{ $product->category->color }}; color: white;">
+                                {{ $product->category->name }}
+                            </span>
+                        @else
+                            <span class="badge bg-secondary">Aucune</span>
+                        @endif
+                    </td>
                     <td>{{ $product->description }}</td>
                     <td>{{ $product->price }} FCFA</td>
                     <td>

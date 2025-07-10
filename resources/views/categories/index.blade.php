@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ajouter un produit</title>
+    <title>Gestion des Catégories</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 </head>
@@ -29,7 +29,7 @@
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ route('categories.index') }}">
+                        <a class="nav-link active" href="{{ route('categories.index') }}">
                             <i class="fas fa-tags me-1"></i>Catégories
                         </a>
                     </li>
@@ -73,72 +73,72 @@
     </nav>
 
     <div class="container mt-4">
-        <h1 class="mb-4">Ajouter un produit</h1>
-        
-        @if($errors->any())
-            <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                <i class="fas fa-exclamation-triangle me-2"></i>Veuillez corriger les erreurs suivantes :
-                <ul class="mb-0 mt-2">
-                    @foreach($errors->all() as $error)
-                        <li>{{ $error }}</li>
-                    @endforeach
-                </ul>
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1><i class="fas fa-tags me-2"></i>Gestion des Catégories</h1>
+            <a href="{{ route('categories.create') }}" class="btn btn-primary">
+                <i class="fas fa-plus me-2"></i>Nouvelle Catégorie
+            </a>
+        </div>
+
+        @if(session('success'))
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                <i class="fas fa-check-circle me-2"></i>{{ session('success') }}
                 <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
             </div>
         @endif
 
-        <div class="card">
-            <div class="card-body">
-                <form method="POST" action="{{ route('products.store') }}">
-            @csrf
-                                <div class="mb-3">
-                        <label for="name" class="form-label">Nom du produit</label>
-                        <input type="text" class="form-control" id="name" name="name" value="{{ old('name') }}" required>
-                    </div>
-                    <div class="mb-3">
-                        <label for="reference" class="form-label">Référence</label>
-                        <input type="text" class="form-control" id="reference" name="reference" value="{{ old('reference') }}" required>
-                        <div class="form-text">Code unique pour identifier le produit (ex: PROD-001)</div>
-                    </div>
-                    <div class="mb-3">
-                        <label for="category_id" class="form-label">Catégorie</label>
-                        <select class="form-control" id="category_id" name="category_id">
-                            <option value="">Sélectionner une catégorie</option>
-                            @foreach($categories as $category)
-                                <option value="{{ $category->id }}" {{ old('category_id') == $category->id ? 'selected' : '' }}>
-                                    {{ $category->name }}
-                                </option>
-                            @endforeach
-                        </select>
-                    </div>
-            <div class="mb-3">
-                <label for="description" class="form-label">Description</label>
-                <textarea class="form-control" id="description" name="description">{{ old('description') }}</textarea>
+        @if(session('error'))
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                <i class="fas fa-exclamation-triangle me-2"></i>{{ session('error') }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
             </div>
-            <div class="mb-3">
-                <label for="price" class="form-label">Prix (€)</label>
-                <input type="number" step="0.01" class="form-control" id="price" name="price" value="{{ old('price') }}" required>
-            </div>
-                                <div class="mb-3">
-                        <label for="quantity" class="form-label">Quantité</label>
-                        <input type="number" class="form-control" id="quantity" name="quantity" value="{{ old('quantity') }}" required>
+        @endif
+
+        <div class="row">
+            @foreach($categories as $category)
+            <div class="col-md-4 mb-4">
+                <div class="card h-100">
+                    <div class="card-header" style="background-color: {{ $category->color }}; color: white;">
+                        <h5 class="mb-0">{{ $category->name }}</h5>
                     </div>
-                    <div class="mb-3">
-                        <label for="min_quantity" class="form-label">Quantité minimum (Seuil d'alerte)</label>
-                        <input type="number" class="form-control" id="min_quantity" name="min_quantity" value="{{ old('min_quantity', 5) }}" required>
-                        <div class="form-text">Alerte quand le stock descend en dessous de cette valeur</div>
+                    <div class="card-body">
+                        <p class="card-text">{{ $category->description ?: 'Aucune description' }}</p>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span class="badge bg-info">{{ $category->products_count }} produit(s)</span>
+                            <div class="btn-group" role="group">
+                                <a href="{{ route('categories.show', $category->id) }}" class="btn btn-outline-primary btn-sm" title="Voir">
+                                    <i class="fas fa-eye"></i>
+                                </a>
+                                <a href="{{ route('categories.edit', $category->id) }}" class="btn btn-outline-warning btn-sm" title="Modifier">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                                <form action="{{ route('categories.destroy', $category->id) }}" method="POST" class="d-inline">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button class="btn btn-outline-danger btn-sm" onclick="return confirm('Êtes-vous sûr de vouloir supprimer cette catégorie ?')" title="Supprimer">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
                     </div>
-            <div class="d-flex gap-2">
-                <button type="submit" class="btn btn-primary">
-                    <i class="fas fa-plus me-2"></i>Ajouter
-                </button>
-                <a href="{{ route('products.index') }}" class="btn btn-secondary">
-                    <i class="fas fa-arrow-left me-2"></i>Annuler
-                </a>
+                </div>
             </div>
-        </form>
-            </div>
+            @endforeach
         </div>
+
+        @if($categories->isEmpty())
+        <div class="text-center py-5">
+            <i class="fas fa-tags fa-3x text-muted mb-3"></i>
+            <h4 class="text-muted">Aucune catégorie trouvée</h4>
+            <p class="text-muted">Commencez par créer votre première catégorie.</p>
+            <a href="{{ route('categories.create') }}" class="btn btn-primary">
+                <i class="fas fa-plus me-2"></i>Créer une catégorie
+            </a>
+        </div>
+        @endif
+    </div>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html> 

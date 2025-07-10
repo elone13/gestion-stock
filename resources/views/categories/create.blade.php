@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ajouter un produit</title>
+    <title>Nouvelle Catégorie</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 </head>
@@ -73,8 +73,8 @@
     </nav>
 
     <div class="container mt-4">
-        <h1 class="mb-4">Ajouter un produit</h1>
-        
+        <h1 class="mb-4"><i class="fas fa-plus me-2"></i>Nouvelle Catégorie</h1>
+
         @if($errors->any())
             <div class="alert alert-danger alert-dismissible fade show" role="alert">
                 <i class="fas fa-exclamation-triangle me-2"></i>Veuillez corriger les erreurs suivantes :
@@ -89,56 +89,36 @@
 
         <div class="card">
             <div class="card-body">
-                <form method="POST" action="{{ route('products.store') }}">
-            @csrf
-                                <div class="mb-3">
-                        <label for="name" class="form-label">Nom du produit</label>
+                <form method="POST" action="{{ route('categories.store') }}">
+                    @csrf
+                    <div class="mb-3">
+                        <label for="name" class="form-label">Nom de la catégorie</label>
                         <input type="text" class="form-control" id="name" name="name" value="{{ old('name') }}" required>
                     </div>
                     <div class="mb-3">
-                        <label for="reference" class="form-label">Référence</label>
-                        <input type="text" class="form-control" id="reference" name="reference" value="{{ old('reference') }}" required>
-                        <div class="form-text">Code unique pour identifier le produit (ex: PROD-001)</div>
+                        <label for="description" class="form-label">Description</label>
+                        <textarea class="form-control" id="description" name="description" rows="3">{{ old('description') }}</textarea>
                     </div>
                     <div class="mb-3">
-                        <label for="category_id" class="form-label">Catégorie</label>
-                        <select class="form-control" id="category_id" name="category_id">
-                            <option value="">Sélectionner une catégorie</option>
-                            @foreach($categories as $category)
-                                <option value="{{ $category->id }}" {{ old('category_id') == $category->id ? 'selected' : '' }}>
-                                    {{ $category->name }}
-                                </option>
-                            @endforeach
-                        </select>
+                        <label for="color" class="form-label">Couleur</label>
+                        <div class="d-flex align-items-center gap-3">
+                            <input type="color" class="form-control form-control-color" id="color" name="color" value="{{ old('color', '#007bff') }}" title="Choisir une couleur">
+                            <span class="text-muted">Choisissez une couleur pour identifier cette catégorie</span>
+                        </div>
                     </div>
-            <div class="mb-3">
-                <label for="description" class="form-label">Description</label>
-                <textarea class="form-control" id="description" name="description">{{ old('description') }}</textarea>
-            </div>
-            <div class="mb-3">
-                <label for="price" class="form-label">Prix (€)</label>
-                <input type="number" step="0.01" class="form-control" id="price" name="price" value="{{ old('price') }}" required>
-            </div>
-                                <div class="mb-3">
-                        <label for="quantity" class="form-label">Quantité</label>
-                        <input type="number" class="form-control" id="quantity" name="quantity" value="{{ old('quantity') }}" required>
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save me-2"></i>Créer
+                        </button>
+                        <a href="{{ route('categories.index') }}" class="btn btn-secondary">
+                            <i class="fas fa-arrow-left me-2"></i>Annuler
+                        </a>
                     </div>
-                    <div class="mb-3">
-                        <label for="min_quantity" class="form-label">Quantité minimum (Seuil d'alerte)</label>
-                        <input type="number" class="form-control" id="min_quantity" name="min_quantity" value="{{ old('min_quantity', 5) }}" required>
-                        <div class="form-text">Alerte quand le stock descend en dessous de cette valeur</div>
-                    </div>
-            <div class="d-flex gap-2">
-                <button type="submit" class="btn btn-primary">
-                    <i class="fas fa-plus me-2"></i>Ajouter
-                </button>
-                <a href="{{ route('products.index') }}" class="btn btn-secondary">
-                    <i class="fas fa-arrow-left me-2"></i>Annuler
-                </a>
-            </div>
-        </form>
+                </form>
             </div>
         </div>
+    </div>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html> 

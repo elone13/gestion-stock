@@ -28,6 +28,24 @@
                             <i class="fas fa-box me-1"></i>Produits
                         </a>
                     </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ route('categories.index') }}">
+                            <i class="fas fa-tags me-1"></i>Catégories
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ route('stock-movements.index') }}">
+                            <i class="fas fa-exchange-alt me-1"></i>Mouvements
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ route('notifications.index') }}">
+                            <i class="fas fa-bell me-1"></i>Notifications
+                            @if(auth()->user()->unreadNotificationsCount() > 0)
+                                <span class="badge bg-danger ms-1">{{ auth()->user()->unreadNotificationsCount() }}</span>
+                            @endif
+                        </a>
+                    </li>
                 </ul>
                 <ul class="navbar-nav">
                     <li class="nav-item dropdown">
@@ -86,6 +104,22 @@
                         <input type="text" class="form-control" id="name" name="name" value="{{ old('name', $product->name) }}" required>
                     </div>
                     <div class="mb-3">
+                        <label for="reference" class="form-label">Référence</label>
+                        <input type="text" class="form-control" id="reference" name="reference" value="{{ old('reference', $product->reference) }}" required>
+                        <div class="form-text">Code unique pour identifier le produit</div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="category_id" class="form-label">Catégorie</label>
+                        <select class="form-control" id="category_id" name="category_id">
+                            <option value="">Sélectionner une catégorie</option>
+                            @foreach($categories as $category)
+                                <option value="{{ $category->id }}" {{ old('category_id', $product->category_id) == $category->id ? 'selected' : '' }}>
+                                    {{ $category->name }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="mb-3">
                         <label for="description" class="form-label">Description</label>
                         <textarea class="form-control" id="description" name="description" rows="3">{{ old('description', $product->description) }}</textarea>
                     </div>
@@ -96,6 +130,11 @@
                     <div class="mb-3">
                         <label for="quantity" class="form-label">Quantité</label>
                         <input type="number" class="form-control" id="quantity" name="quantity" value="{{ old('quantity', $product->quantity) }}" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="min_quantity" class="form-label">Quantité minimum (Seuil d'alerte)</label>
+                        <input type="number" class="form-control" id="min_quantity" name="min_quantity" value="{{ old('min_quantity', $product->min_quantity) }}" required>
+                        <div class="form-text">Alerte quand le stock descend en dessous de cette valeur</div>
                     </div>
                     <div class="d-flex gap-2">
                         <button type="submit" class="btn btn-warning">

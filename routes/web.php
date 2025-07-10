@@ -84,4 +84,29 @@ Route::middleware('auth')->group(function () {
     
     // Routes pour la gestion des produits
     Route::resource('products', \App\Http\Controllers\ProductController::class);
+    
+    // Routes pour la gestion des catégories
+    Route::resource('categories', \App\Http\Controllers\CategoryController::class);
+    
+    // Routes pour la gestion des mouvements de stock
+    Route::resource('stock-movements', \App\Http\Controllers\StockMovementController::class)->except(['edit', 'update', 'destroy']);
+    Route::get('stock-movements/product/{product}/history', [\App\Http\Controllers\StockMovementController::class, 'productHistory'])->name('stock-movements.product-history');
+    Route::get('stock-movements/quick-entry', [\App\Http\Controllers\StockMovementController::class, 'quickEntry'])->name('stock-movements.quick-entry');
+    Route::get('stock-movements/quick-exit', [\App\Http\Controllers\StockMovementController::class, 'quickExit'])->name('stock-movements.quick-exit');
+    
+    // Routes pour les notifications
+    Route::get('notifications', [\App\Http\Controllers\NotificationController::class, 'index'])->name('notifications.index');
+    Route::patch('notifications/{notification}/read', [\App\Http\Controllers\NotificationController::class, 'markAsRead'])->name('notifications.mark-as-read');
+    Route::patch('notifications/mark-all-read', [\App\Http\Controllers\NotificationController::class, 'markAllAsRead'])->name('notifications.mark-all-read');
+    Route::delete('notifications/{notification}', [\App\Http\Controllers\NotificationController::class, 'destroy'])->name('notifications.destroy');
+    Route::get('notifications/unread-count', [\App\Http\Controllers\NotificationController::class, 'getUnreadCount'])->name('notifications.unread-count');
+    Route::get('notifications/unread-list', [\App\Http\Controllers\NotificationController::class, 'getUnreadNotifications'])->name('notifications.unread-list');
+    
+    // Routes pour les rapports et exports
+    Route::get('reports', [\App\Http\Controllers\ReportController::class, 'index'])->name('reports.index');
+    Route::get('reports/export-products', [\App\Http\Controllers\ReportController::class, 'exportProducts'])->name('reports.export-products');
+    Route::get('reports/export-stock-movements', [\App\Http\Controllers\ReportController::class, 'exportStockMovements'])->name('reports.export-stock-movements');
+    Route::get('reports/stock-value', [\App\Http\Controllers\ReportController::class, 'stockValue'])->name('reports.stock-value');
+    Route::get('reports/category', [\App\Http\Controllers\ReportController::class, 'categoryReport'])->name('reports.category');
+    Route::get('reports/movements', [\App\Http\Controllers\ReportController::class, 'movementReport'])->name('reports.movements');
 });

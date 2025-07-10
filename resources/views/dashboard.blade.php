@@ -28,6 +28,24 @@
                             <i class="fas fa-box me-1"></i>Produits
                         </a>
                     </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ route('categories.index') }}">
+                            <i class="fas fa-tags me-1"></i>Catégories
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ route('stock-movements.index') }}">
+                            <i class="fas fa-exchange-alt me-1"></i>Mouvements
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ route('notifications.index') }}">
+                            <i class="fas fa-bell me-1"></i>Notifications
+                            @if(auth()->user()->unreadNotificationsCount() > 0)
+                                <span class="badge bg-danger ms-1">{{ auth()->user()->unreadNotificationsCount() }}</span>
+                            @endif
+                        </a>
+                    </li>
                 </ul>
                 <ul class="navbar-nav">
                     <li class="nav-item dropdown">
@@ -128,9 +146,19 @@
                                     <i class="fas fa-plus me-2"></i>Ajouter un Produit
                                 </a>
                             </div>
-                            <div class="col-md-6 mb-3">
+                            <div class="col-md-4 mb-3">
                                 <a href="{{ route('products.index') }}" class="btn btn-info btn-lg w-100">
                                     <i class="fas fa-list me-2"></i>Voir tous les Produits
+                                </a>
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                <a href="{{ route('categories.index') }}" class="btn btn-success btn-lg w-100">
+                                    <i class="fas fa-tags me-2"></i>Gérer les Catégories
+                                </a>
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                <a href="{{ route('stock-movements.index') }}" class="btn btn-warning btn-lg w-100">
+                                    <i class="fas fa-exchange-alt me-2"></i>Mouvements de Stock
                                 </a>
                             </div>
                         </div>
